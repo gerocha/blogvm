@@ -28,19 +28,19 @@
       shell: mkdir -p /opt/wordpress
 
     - name: "Download do Wordpress"
-      get_url: url=https://wordpress.org/latest.tar.gz dest=/tmp/latest.tar.gz
+      get_url: url=http://wordpress.org/latest.tar.gz dest=/tmp/latest.tar.gz timeout=100
 
     - name: "Abre wordpress em /opt/wordpress"
       unarchive: src=/tmp/latest.tar.gz dest=/opt copy=no
 
     - name: "Corrige permissoes"
-      file: path=/opt/wordpress recurse=yes owrner=www-data group=www-data
+      file: path=/opt/wordpress recurse=yes owner=www-data group=www-data
 
     - name: "Inicia mysql"
       service: name=mysql state=started enabled=true
 
     - name: "Criar .my.cnf"
-      template: src=my.cnf.js dest=~/.my.cnf mode=0600
+      template: src=my.cnf.j2 dest=~/.my.cnf mode=0600
 
     - name: "Cria senha de root para root@mysql"
       mysql_user: name=root
@@ -52,7 +52,7 @@
       with_items:
         - "{{ ansible_hostname }}"
         - 127.0.0.1
-        - *1
+        - ::1
         - localhost
 
     - name: "Criar wordpress database"
@@ -61,16 +61,15 @@
     - name: "Cria usuario wordpress"
       mysql_user: name="{{ mysql_wp_user }}"
         password="{{ mysql_wp_password }}"
-        priv="{{ wordpress_db_name }}".*ALL
+        priv="{{ wordpress_db_name }}".*:ALL
         check_implicit_admin=yes
         login_user=root
-        login_password="{{ musql_root_password }}"
-        host="{{ item }}"
+        login_password="{{ mysql_root_password }}"
         state=present
       with_items:
         -"{{ ansible_hostname }}"
         - 127.0.0.1
-        - *1
+        - ::1
         - localhost
 
     - name: "Copia configuracao de blog.nginx para /et/nginx/sites-available/blog"

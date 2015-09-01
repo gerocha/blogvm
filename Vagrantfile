@@ -9,7 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         blogvm.vm.network :private_network, ip: "192.168.33.22"
         blogvm.vm.provision "ansible" do |ansible|
             ansible.playbook = "blog.yml"
-            ansible.verbose = "vvv"
+            ansible.verbose = "vvvv"
         end
     end
 
