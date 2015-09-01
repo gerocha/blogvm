@@ -1,0 +1,8 @@
+    - name: "Instala biblioteca python-mysqldb"
+      apt: name=python-mysqldb state=latest install_recommends=yes
+
+    - name: "Copia diretorio /opt/wordpress"
+      shell: mkdir -p /opt/wordpress
+
+    - name: "Cria uma pagina de teste do PHP"
+      copy: src=test.php dest=/opt/wordpress

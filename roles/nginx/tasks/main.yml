@@ -1,0 +1,14 @@
+    - name: "Atualiza pacotes e instala o nginx"
+      apt: name=nginx state=latest update_cache=yes install_recommends=yes
+
+    - name: "Copia configuracao de blog.nginx para /et/nginx/sites-available/blog"
+      copy: src=blog.nginx dest=/etc/nginx/sites-available/blog
+
+    - name: "Ativar o site"
+      shell: ln -fs /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/blog
+
+    - name: "Apaga o site default"
+      shell: rm -f /etc/nginx/sites-enabled/default
+
+    - name: "Reinicia o nginx"
+      shell: service nginx restart
